@@ -1,0 +1,11 @@
+{
+  "fault": "forbidden",
+  "old": "return [c for c in numeric if c not in FORBIDDEN]",
+  "new": "return [c for c in numeric if c not in FORBIDDEN] + [\"casual\"]",
+  "pytest_exit": 1,
+  "hook_exit": 1,
+  "repair": "restore original bytes in finally",
+  "repair_actions": 1,
+  "repaired_pytest_exit": 0,
+  "agent": "Codex orchestrated; no local-model repair turn"
+}
