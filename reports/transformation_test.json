@@ -1,0 +1,9 @@
+{
+  "transformation": "cnt - cnt_lag_1",
+  "reconstruction": "cnt_lag_1 + predicted_delta",
+  "split": "test",
+  "n_train": 348,
+  "n_evaluation": 184,
+  "r2": 0.4761,
+  "mae": 990.5
+}
