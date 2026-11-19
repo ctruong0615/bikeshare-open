@@ -6,6 +6,7 @@ from sklearn.metrics import r2_score
 from src.config import FORBIDDEN, LAG_WARMUP, RAW_FEATURE_COLS, TARGET
 from src.features import build_features, feature_columns, reindex_to_calendar
 from src.ingest import load_raw
+from src.ingest import verify_raw_hash
 from src.train import MODELS, temporal_split
 
 
@@ -62,3 +63,7 @@ def test_every_raw_column_is_classified(raw):
     classified = FORBIDDEN | RAW_FEATURE_COLS | {"dteday"}
     unknown = set(raw.columns) - classified
     assert not unknown, f"unclassified raw columns: {sorted(unknown)}"
+
+
+def test_raw_csv_is_the_immutable_starter_copy():
+    verify_raw_hash()

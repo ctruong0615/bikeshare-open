@@ -5,6 +5,7 @@ rides) from calendar, weather, and lagged-demand features.
 
 ## Commands
 - `/seed-fault <forbidden|rolling|weather>` records a controlled failure and restores it.
+- Stop verification checks the raw CSV hash as well as the tests, including after Bash.
 - `make data` - download raw CSV and assert its shape
 - `make features` - build `data/processed/features.parquet`
 - `make train` - fit models, write `reports/metrics.json`
@@ -21,6 +22,7 @@ rides) from calendar, weather, and lagged-demand features.
 - Any new lag or rolling feature must be built on a gap-free calendar
   index (`src.features.reindex_to_calendar`) and must `.shift(1)` before
   it aggregates. Add a test for it in `tests/test_leakage.py`.
+- `cnt_roll_std_7` is sample variability of the previous seven days, never today's count.
 - Report the mean baseline **and** the persistence baseline (yesterday's
   count) alongside every model. A negative R^2 is a finding, not a bug
   to hide.

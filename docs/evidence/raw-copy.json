@@ -1,0 +1,11 @@
+{
+  "command": "cp \"$1\" data/raw/bike_daily.csv",
+  "mutation": "append one newline to an otherwise identical CSV",
+  "cp_exit": 0,
+  "posttool_hook_exit": 0,
+  "posttool_hook_stderr": "",
+  "ingest_hash_guard_exit": 1,
+  "stop_hook_exit": 2,
+  "original_sha256": "a6bed1577f6e4de56dcfae6d8315985073cc0ad3446c8c99ed60c86a0b5ad9dc",
+  "restored_sha256": "a6bed1577f6e4de56dcfae6d8315985073cc0ad3446c8c99ed60c86a0b5ad9dc"
+}

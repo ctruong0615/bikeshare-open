@@ -1,0 +1,10 @@
+Final verification failed; repair before claiming completion.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Calvin\Documents\Codex\2026-11-18\https-dsc-capstone-org-2026-27\outputs\bikeshare-open\src\ingest.py", line 42, in <module>
+    verify_raw_hash()
+  File "C:\Users\Calvin\Documents\Codex\2026-11-18\https-dsc-capstone-org-2026-27\outputs\bikeshare-open\src\ingest.py", line 37, in verify_raw_hash
+    raise ValueError(f"raw CSV hash mismatch: expected {RAW_SHA256}, got {actual}")
+ValueError: raw CSV hash mismatch: expected a6bed1577f6e4de56dcfae6d8315985073cc0ad3446c8c99ed60c86a0b5ad9dc, got 8b19181406f2d6599f3cb5bd73ce3e81b5883599ca00badcfdb2f7e17c9dded7
+

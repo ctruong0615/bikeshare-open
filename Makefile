@@ -25,8 +25,7 @@ clean:
 BASE ?= qwen3.5:9b
 
 model:
-	ollama pull $(BASE)
-	sed "s|^FROM .*|FROM $(BASE)|" model/Modelfile | ollama create bikeshare-coder -f -
+	python scripts/build_model.py --base $(BASE)
 
 check-model:
 	bash model/check.sh
