@@ -27,11 +27,13 @@ separate. Windows Credential Manager is unavailable inside the Codex sandbox.
 Run this outside the sandbox and complete any GitHub sign-in prompt:
 
 ```powershell
-git -C "C:\Users\Calvin\Documents\Codex\2026-11-18\https-dsc-capstone-org-2026-27\outputs\bikeshare-open" push -u origin main
+$assignmentRepo = "C:/Users/Calvin/Documents/Codex/2026-11-18/https-dsc-capstone-org-2026-27/outputs/bikeshare-open"
+git -c "safe.directory=$assignmentRepo" -C $assignmentRepo push -u origin main
 ```
 
 The remote is already configured. After later commits, use the same command
-or run `git push` inside the repository. Push each completed milestone and
+again. The path-specific trust exception is needed because the sandbox account
+created the repository; it applies only to this command. Push each completed milestone and
 push once more after the peer audit and final report review. Do not add the
 virtual environment, downloaded tools, or model files to Git.
 

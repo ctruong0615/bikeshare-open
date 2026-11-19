@@ -1,0 +1,12 @@
+{
+  "fault": "weather",
+  "attempt": 2,
+  "old": "raise ValueError(f\"unmapped weather labels: {sorted(unknown)}\")",
+  "new": "pass  # seeded fault: silently map unexpected labels to NaN",
+  "pytest_exit": 1,
+  "hook_exit": 2,
+  "repair": "restore original bytes in finally",
+  "repair_actions": 1,
+  "repaired_pytest_exit": 0,
+  "agent": "Codex orchestrated; no local-model repair turn"
+}

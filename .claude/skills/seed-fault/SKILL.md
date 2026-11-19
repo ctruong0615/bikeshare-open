@@ -9,15 +9,16 @@ allowed-tools: Read, Edit, Bash(python *), Bash(make *), Bash(git diff *)
 Accept `forbidden`, `rolling`, or `weather`. Invoke
 `python scripts/seed_fault.py $ARGUMENTS` from the repository root.
 
-The script requires the intended source fragment and no existing evidence
-for that fault. It temporarily changes one fragment, captures the complete
+The script requires the intended source fragment and chooses the next unused
+attempt prefix, preserving prior evidence. It temporarily changes one fragment, captures the complete
 pytest output and the PostToolUse hook's stderr, and restores the original
 bytes in `finally`. It then reruns the tests on the restored source.
 
-Read the resulting evidence under `docs/evidence/`. A demonstration counts
+The script appends the exact mutation and real logs to `docs/SEEDED_FAULTS.md`.
+A demonstration counts
 only if the broken test exits nonzero, the hook exits 2, and the repaired
-tests pass. Summarize those exit codes, and append the exact mutation and
-links to both logs to `docs/SEEDED_FAULTS.md`. Name the repair mechanism:
+tests pass. Summarize the printed exit codes and the returned `evidence_prefix` without
+editing or searching other files. Name the repair mechanism:
 this scripted restoration is one deterministic repair action, not a claim
 that a language model independently diagnosed the bug in one turn.
 

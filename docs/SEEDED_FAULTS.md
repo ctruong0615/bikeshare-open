@@ -430,3 +430,51 @@ ValueError: raw CSV hash mismatch: expected a6bed1577f6e4de56dcfae6d8315985073cc
 ```
 
 The implemented controls are a SHA256 check in `make data`, an immutable-raw test, and a Stop hook that runs ingest verification and the tests regardless of which editing tool was used. They detect the corruption before the work can be called complete; filesystem permissions would be needed to prevent the write itself.
+
+## Repeated weather demonstration, attempt 2
+
+One deterministic byte-restoration action; no independent model debugging turn.
+
+```diff
+-raise ValueError(f"unmapped weather labels: {sorted(unknown)}")
++pass  # seeded fault: silently map unexpected labels to NaN
+```
+
+pytest exit 1; hook exit 2; repaired pytest exit 0.
+
+Actual red test output:
+```text
+.............F.....                                                      [100%]
+================================== FAILURES ===================================
+______________________ test_unknown_weather_fails_loudly ______________________
+
+    def test_unknown_weather_fails_loudly():
+>       with pytest.raises(ValueError, match="unmapped weather labels"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\test_leakage.py:73: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_leakage.py::test_unknown_weather_fails_loudly - Failed: DID...
+1 failed, 18 passed in 3.96s
+
+```
+
+Actual hook stderr:
+```text
+Leakage tests failed after editing C:/Users/Calvin/Documents/Codex/2026-11-18/https-dsc-capstone-org-2026-27/outputs/bikeshare-open/src/features.py:
+.......F..                                                               [100%]
+================================== FAILURES ===================================
+______________________ test_unknown_weather_fails_loudly ______________________
+
+    def test_unknown_weather_fails_loudly():
+>       with pytest.raises(ValueError, match="unmapped weather labels"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\test_leakage.py:73: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_leakage.py::test_unknown_weather_fails_loudly - Failed: DID...
+1 failed, 9 passed in 1.63s
+
+```

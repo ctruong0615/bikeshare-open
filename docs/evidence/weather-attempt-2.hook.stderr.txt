@@ -1,0 +1,14 @@
+Leakage tests failed after editing C:/Users/Calvin/Documents/Codex/2026-11-18/https-dsc-capstone-org-2026-27/outputs/bikeshare-open/src/features.py:
+.......F..                                                               [100%]
+================================== FAILURES ===================================
+______________________ test_unknown_weather_fails_loudly ______________________
+
+    def test_unknown_weather_fails_loudly():
+>       with pytest.raises(ValueError, match="unmapped weather labels"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\test_leakage.py:73: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_leakage.py::test_unknown_weather_fails_loudly - Failed: DID...
+1 failed, 9 passed in 1.63s
