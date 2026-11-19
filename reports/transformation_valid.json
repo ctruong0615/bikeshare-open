@@ -4,6 +4,6 @@
   "split": "valid",
   "n_train": 348,
   "n_evaluation": 182,
-  "r2": 0.6079,
-  "mae": 834.3
+  "r2": 0.5642,
+  "mae": 885.8
 }

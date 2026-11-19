@@ -49,7 +49,8 @@ from claude_agent_sdk import (
     {"csv_path": str, "target": str, "candidates": list},
 )
 async def check_identity(args: dict[str, Any]) -> dict[str, Any]:
-    df = pd.read_csv(args["csv_path"])
+    path = Path(args["csv_path"])
+    df = pd.read_parquet(path) if path.suffix == ".parquet" else pd.read_csv(path)
     target = df[args["target"]].to_numpy(dtype=float)
     cols = [c for c in args["candidates"] if c in df.columns and c != args["target"]]
 
@@ -145,6 +146,8 @@ async def audit_repo(repo: Path) -> dict[str, Any]:
     options = ClaudeAgentOptions(
         system_prompt=SYSTEM,
         cwd=str(repo),
+        setting_sources=["project"],
+        cli_path=os.environ.get("CLAUDE_CLI_PATH") or None,
         mcp_servers={"audit": auditor_tools},
         allowed_tools=[
             "Read",
@@ -153,6 +156,7 @@ async def audit_repo(repo: Path) -> dict[str, Any]:
             "Bash",
             "mcp__audit__check_identity",
         ],
+        disallowed_tools=["Edit", "Write", "NotebookEdit"],
         # allowed_tools is the boundary. Anything not listed is denied
         # automatically in a headless run, so the auditor can read and run
         # but has no Edit or Write to grant.
@@ -166,7 +170,15 @@ async def audit_repo(repo: Path) -> dict[str, Any]:
     # intermediate TextBlock ("Let me look at config.py first...") and
     # json.loads-ing the lot fails on the first repo that thinks out loud.
     final: ResultMessage | None = None
-    async for message in query(prompt=f"Audit the repo at {repo}.", options=options):
+    prompt = (
+        f"Audit the repo at {repo.resolve()}. Read src/config.py, src/features.py, "
+        "src/train.py and reports/metrics.json. For numerical identity checks, "
+        "use the processed parquet table and ONLY the feature names actually "
+        "passed to models by feature_columns; raw columns may be deliberately "
+        "retained in the table for tests but excluded from the model. Do not "
+        "edit files. Return the schema object after verifying the four checks."
+    )
+    async for message in query(prompt=prompt, options=options):
         if isinstance(message, ResultMessage):
             final = message
 
@@ -195,10 +207,14 @@ async def main() -> None:
 
     async def bounded(repo: Path) -> dict[str, Any]:
         async with sem:
-            return await audit_repo(repo)
+            try:
+                return await audit_repo(repo)
+            except Exception as exc:
+                return {"repo": repo.name, "error": type(exc).__name__, "raw": str(exc)[:500]}
 
     results = await asyncio.gather(*(bounded(r) for r in ns.repos))
-    with ns.out.open("w") as fh:
+    ns.out.parent.mkdir(parents=True, exist_ok=True)
+    with ns.out.open("w", encoding="utf-8") as fh:
         for row in results:
             fh.write(json.dumps(row) + "\n")
 

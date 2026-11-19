@@ -18,6 +18,7 @@ Run: python -m src.train
 import json
 
 import pandas as pd
+from sklearn.base import clone
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor
@@ -62,9 +63,7 @@ def temporal_split(df: pd.DataFrame):
     return train, valid, test
 
 
-def fit_and_score() -> dict:
-    df = pd.read_parquet(PROCESSED)
-    cols = feature_columns(df)
+def score_columns(df, cols) -> dict:
     train, valid, test = temporal_split(df)
 
     results = {
@@ -75,6 +74,7 @@ def fit_and_score() -> dict:
         "n_test": len(test),
     }
     for name, model in MODELS.items():
+        model = clone(model)
         model.fit(train[cols], train[TARGET])
         results[name] = {
             split: {
@@ -86,8 +86,22 @@ def fit_and_score() -> dict:
     return results
 
 
+def fit_and_score() -> dict:
+    df = pd.read_parquet(PROCESSED)
+    cols = feature_columns(df)
+    results = score_columns(df, cols)
+    # Regenerate both scenarios on the same rows. This snapshot is not a
+    # copied historical score: clean `make all` recomputes every table cell.
+    before_cols = [c for c in cols if c != "cnt_roll_std_7"]
+    results["before_feature"] = score_columns(df, before_cols)
+    return results
+
+
 if __name__ == "__main__":
     res = fit_and_score()
     METRICS.parent.mkdir(parents=True, exist_ok=True)
     METRICS.write_text(json.dumps(res, indent=2))
+    METRICS.with_name("before_feature.json").write_text(
+        json.dumps(res["before_feature"], indent=2)
+    )
     print(json.dumps({k: v for k, v in res.items() if k != "features"}, indent=2))
