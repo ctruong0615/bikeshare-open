@@ -1,0 +1,7 @@
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+Makefile text eol=lf
+data/raw/bike_daily.csv -text
