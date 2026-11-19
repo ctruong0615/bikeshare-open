@@ -74,6 +74,19 @@ def test_unknown_weather_fails_loudly():
         encode_weather(pd.Series(["GOOD", "UNEXPECTED_WEATHER"]))
 
 
+def test_cnt_roll_std_7_on_2011_01_10(feats):
+    """Sample std from Jan 3--9; Jan 10's count must not enter the window."""
+    counts = [1349, 1562, 1600, 1606, 1510, 959, 822]
+    raw = load_raw().set_index("dteday")
+    dates = pd.date_range("2011-01-03", "2011-01-09", freq="D")
+    assert raw.loc[dates, TARGET].tolist() == counts
+    mean = sum(counts) / 7
+    expected = (sum((value - mean) ** 2 for value in counts) / 6) ** 0.5
+    assert feats.set_index("dteday").loc[
+        pd.Timestamp("2011-01-10"), "cnt_roll_std_7"
+    ] == pytest.approx(expected)
+
+
 def test_no_exact_target_identity_in_model_inputs(feats):
     """Inspect values so an innocently renamed target cannot hide in inputs."""
     cols = feature_columns(feats)
