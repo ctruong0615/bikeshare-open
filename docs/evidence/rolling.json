@@ -1,0 +1,11 @@
+{
+  "fault": "rolling",
+  "old": "out[\"cnt_roll_7\"] = out[TARGET].shift(1).rolling(LAG_WARMUP).mean()",
+  "new": "out[\"cnt_roll_7\"] = out[TARGET].rolling(LAG_WARMUP).mean()",
+  "pytest_exit": 1,
+  "hook_exit": 2,
+  "repair": "restore original bytes in finally",
+  "repair_actions": 1,
+  "repaired_pytest_exit": 0,
+  "agent": "Codex orchestrated; no local-model repair turn"
+}
