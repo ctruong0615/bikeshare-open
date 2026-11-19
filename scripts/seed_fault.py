@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -30,9 +31,9 @@ def command(args, **kwargs):
                           encoding="utf-8", errors="replace", **kwargs)
 
 
-def run(name):
+def run(name, attempt=1):
     EVIDENCE.mkdir(parents=True, exist_ok=True)
-    prefix = EVIDENCE / name
+    prefix = EVIDENCE / (name if attempt == 1 else f"{name}-attempt-{attempt}")
     if prefix.with_suffix(".json").exists():
         raise SystemExit(f"Evidence already exists for {name}; refusing to overwrite")
     old, new = FAULTS[name]
@@ -43,11 +44,12 @@ def run(name):
     try:
         SOURCE.write_bytes(original.replace(old.encode(), new.encode()))
         red = command([sys.executable, "-m", "pytest", "tests/", "-q"])
-        hook = command(["bash", ".claude/hooks/check_leakage.sh"],
+        hook = command([shutil.which("bash"), ".claude/hooks/check_leakage.sh"],
                        input=json.dumps({"tool_name": "Edit", "tool_input": {
-                           "file_path": str(SOURCE)}}), env=env)
+                           "file_path": SOURCE.as_posix()}}), env=env)
         prefix.with_suffix(".pytest.txt").write_text(red.stdout + red.stderr, encoding="utf-8")
         prefix.with_suffix(".hook.stderr.txt").write_text(hook.stderr, encoding="utf-8")
+        prefix.with_suffix(".hook.stdout.txt").write_text(hook.stdout, encoding="utf-8")
     finally:
         SOURCE.write_bytes(original)
     green = command([sys.executable, "-m", "pytest", "tests/", "-q"])
@@ -66,4 +68,6 @@ def run(name):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("fault", choices=list(FAULTS))
-    run(parser.parse_args().fault)
+    parser.add_argument("--attempt", type=int, default=1)
+    args = parser.parse_args()
+    run(args.fault, args.attempt)
