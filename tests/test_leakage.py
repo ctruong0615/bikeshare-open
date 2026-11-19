@@ -4,11 +4,14 @@ test_no_forbidden_features is the single most valuable test in this repo:
 casual + registered == cnt exactly, so any model handed those columns
 scores R^2 = 1.0 and looks brilliant while having learned nothing.
 """
+from itertools import combinations
+
+import numpy as np
 import pandas as pd
 import pytest
 
 from src.config import FORBIDDEN, TARGET
-from src.features import build_features, feature_columns
+from src.features import build_features, encode_weather, feature_columns
 from src.ingest import load_raw
 
 
@@ -64,3 +67,21 @@ def test_no_missing_values(feats):
 def test_dates_are_sorted_and_unique(feats):
     assert feats.dteday.is_monotonic_increasing
     assert feats.dteday.is_unique
+
+
+def test_unknown_weather_fails_loudly():
+    with pytest.raises(ValueError, match="unmapped weather labels"):
+        encode_weather(pd.Series(["GOOD", "UNEXPECTED_WEATHER"]))
+
+
+def test_no_exact_target_identity_in_model_inputs(feats):
+    """Inspect values so an innocently renamed target cannot hide in inputs."""
+    cols = feature_columns(feats)
+    y = feats[TARGET].to_numpy(dtype=float)
+    for size in (1, 2, 3):
+        for subset in combinations(cols, size):
+            X = np.column_stack([feats[list(subset)].to_numpy(dtype=float),
+                                 np.ones(len(feats))])
+            coef, *_ = np.linalg.lstsq(X, y, rcond=None)
+            residual = np.abs(X @ coef - y).max()
+            assert residual > 1e-6, f"exact target identity in features: {subset}"

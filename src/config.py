@@ -45,6 +45,13 @@ UNVERIFIED_COLS = {"cnt_2d_bfr"}
 # What feature_columns() and the tests actually enforce.
 FORBIDDEN = LEAKAGE_COLS | TIME_INDEX_COLS | UNVERIFIED_COLS
 
+# Raw predictors and calendar/weather context that the builder may consume.
+# Every incoming column must be classified here or explicitly excluded above.
+RAW_FEATURE_COLS = {
+    "season", "mnth", "holiday", "weekday", "temp", "atemp", "hum",
+    "windspeed", "workday", "weather",
+}
+
 # Temporal split: train on 2011, validate on H1 2012, test on H2 2012.
 TRAIN_END = "2011-12-31"
 VALID_END = "2012-06-30"
