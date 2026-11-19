@@ -4,6 +4,7 @@ Daily Capital Bikeshare counts, 2011-2012. We forecast `cnt` (total daily
 rides) from calendar, weather, and lagged-demand features.
 
 ## Commands
+- `/seed-fault <forbidden|rolling|weather>` records a controlled failure and restores it.
 - `make data` - download raw CSV and assert its shape
 - `make features` - build `data/processed/features.parquet`
 - `make train` - fit models, write `reports/metrics.json`
