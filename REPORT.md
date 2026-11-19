@@ -15,6 +15,8 @@ We evaluated one-step daily bikeshare demand using the provided processed mirror
 
 These eight rows are generated from `reports/metrics.json`: its top-level scores are the final feature set, and `before_feature` contains the comparison without `cnt_roll_std_7`. `make all` regenerates both scenarios rather than trusting copied historical metrics. MAE is measured in rides. Dependencies and estimator settings remain pinned to the starter. `make test` currently passes 19 tests. Fault evidence, including the feature’s genuinely failing pre-implementation test, is pasted in `docs/SEEDED_FAULTS.md`.
 
+The SDK self-auditor completed a real local-model run and reported no leakage, valid temporal ordering, both baselines, and reproducibility. Its five `findings` describe passing behavior rather than defects, so we treat them as confirmations, not five problems to fix. Its high confidence is not independent proof: the explicit tests and clean-checkout reproduction carry the verification evidence. In particular, it did not flag the realized-weather deployment limitation discussed below.
+
 The added feature is the sample standard deviation of counts from d−7 through d−1. All seven counts are observed before d; the builder reindexes first and applies `shift(1)` before `rolling(7).std(ddof=1)`. The named-date test independently computes sample variability for Jan 10 from the seven preceding raw observations. No longer warm-up is needed. We kept the feature using ridge’s validation improvement of +0.0749 R² and −132.5 MAE. Gradient boosting deteriorated by −0.1208 validation R²; we did not conceal that result or select a different feature using test scores.
 
 # Headline finding
@@ -41,7 +43,7 @@ Models used: local `qwen3.5:9b` via Ollama as `bikeshare-coder`, 65,536-token co
 
 Agent-generated work:
 - Codex created the repository history, corrected and added tests, implemented the feature, validation and residual-target experiments, integrity/Stop checks, fault scripts and evidence, SDK adjustments, and this report draft. The main modelling pipeline, baseline choices, and five initial decision lines were inherited from the starter.
-- Local qwen received the real `/new-feature` invocation. Its attempted test replacement was rejected and preserved; it was not credited with the corrected test or feature. The local SDK self-audit result is stored in `reports/audit.jsonl` when successful; any failure is retained as failure evidence rather than invented findings.
+- Local qwen received the real `/new-feature` invocation. Its attempted test replacement was rejected and preserved; it was not credited with the corrected test or feature. The completed local SDK self-audit result is stored verbatim in `reports/audit.jsonl`.
 - Source-fault repairs were scripted byte restorations, one repair action each. They are not measurements of independent qwen debugging performance.
 
 Human decisions and review:

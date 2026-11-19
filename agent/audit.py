@@ -214,7 +214,7 @@ async def main() -> None:
 
     results = await asyncio.gather(*(bounded(r) for r in ns.repos))
     ns.out.parent.mkdir(parents=True, exist_ok=True)
-    with ns.out.open("w", encoding="utf-8") as fh:
+    with ns.out.open("w", encoding="utf-8", newline="\n") as fh:
         for row in results:
             fh.write(json.dumps(row) + "\n")
 

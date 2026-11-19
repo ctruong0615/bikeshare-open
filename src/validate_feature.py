@@ -34,5 +34,5 @@ if __name__ == "__main__":
     result = run()
     path = Path("reports/validation_feature.json")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(result, indent=2) + "\n")
+    path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, indent=2))

@@ -42,5 +42,5 @@ if __name__ == "__main__":
     result = run(args.split)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(result, indent=2) + "\n")
+        args.out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, indent=2))

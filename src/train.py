@@ -100,8 +100,8 @@ def fit_and_score() -> dict:
 if __name__ == "__main__":
     res = fit_and_score()
     METRICS.parent.mkdir(parents=True, exist_ok=True)
-    METRICS.write_text(json.dumps(res, indent=2))
+    METRICS.write_text(json.dumps(res, indent=2), encoding="utf-8", newline="\n")
     METRICS.with_name("before_feature.json").write_text(
-        json.dumps(res["before_feature"], indent=2)
+        json.dumps(res["before_feature"], indent=2), encoding="utf-8", newline="\n"
     )
     print(json.dumps({k: v for k, v in res.items() if k != "features"}, indent=2))
