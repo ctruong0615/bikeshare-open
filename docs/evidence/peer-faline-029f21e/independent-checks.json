@@ -1,0 +1,65 @@
+{
+  "audited_commit": "029f21ebd779ba1121888d1bf120bac7ce24f93b",
+  "desktop_changes": [
+    {
+      "file": "docs/evidence/forbidden-attempt-2.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "docs/evidence/forbidden.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "docs/evidence/raw-copy.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "docs/evidence/rolling.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "docs/evidence/weather.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "reports/transformation_test.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "reports/transformation_valid.json",
+      "only_line_endings": true,
+      "same_json": true
+    },
+    {
+      "file": "reports/validation_feature.json",
+      "only_line_endings": true,
+      "same_json": true
+    }
+  ],
+  "validation_before": {
+    "transformation": "cnt - cnt_lag_1",
+    "reconstruction": "cnt_lag_1 + predicted_delta",
+    "split": "valid",
+    "n_train": 348,
+    "n_evaluation": 182,
+    "r2": 0.5642,
+    "mae": 885.8
+  },
+  "validation_after": {
+    "transformation": "cnt - cnt_lag_1",
+    "reconstruction": "cnt_lag_1 + predicted_delta",
+    "split": "valid",
+    "n_train": 348,
+    "n_evaluation": 182,
+    "r2": 0.5642,
+    "mae": 885.8
+  },
+  "validation_unchanged": true,
+  "test_period_scored": false
+}

@@ -1,0 +1,32 @@
+## Audit Report for Commit 029f21ebd779ba1121888d1bf120bac7ce24f93b
+
+**Files reviewed:** `src/experiment.py`, `tests/test_target_transformation.py` against baseline.
+
+### Check Results
+
+| # | Check | Result | Evidence |
+|---|-------|--------|----------|
+| 1 | **Target leakage** | ✓ Pass | Lag features use `.shift(1)` after calendar reindex; `cnt_lag_1` for date d contains cnt from d-1 (verified in `test_lags_are_true_calendar_lags`). No arithmetic combinations of target appear in feature set (`FORBIDDEN` excludes `casual`, `registered`, `cnt`). |
+| 2 | **Temporal ordering** | ✓ Pass | Models fit on train (2011), predict on valid/test (2012). `temporal_split` uses date thresholds, not random. No transformers fit on validation/test rows. Experiment reconstruction uses yesterday's observed count as anchor, never today's target. |
+| 3 | **Calendar gaps** | ✓ Pass | `reindex_to_calendar` fills missing days (e.g., 2011-03-10) before shifting; `.shift(1)` then operates on gap-free calendar index. Test `test_calendar_is_complete_before_lagging` verifies this. |
+| 4 | **Silent row loss** | ✓ Pass | Weather encoding fails loudly on unknown labels (test `test_unknown_weather_fails_loudly`). `dropna()` only removes warmup-period rows, bounded by `LAG_WARMUP`. Test `test_only_expected_rows_are_dropped` asserts row loss is within allowed bounds. |
+| 5 | **Unreported baseline** | ✓ Pass | `baseline_persistence` in `MODELS` predicts yesterday's count; `baseline_mean` also present. Both reported in metrics alongside trained models (see `src/train.py`). |
+
+### Test Suite Status
+All 20 tests pass after applying the diff:
+```
+tests/test_contract.py::... PASSED
+tests/test_leakage.py::... PASSED  
+tests/test_split.py::... PASSED
+tests/test_target_transformation.py::test_reconstruct_counts_adds_predicted_deltas PASSED
+```
+
+### New Function in `src/experiment.py`
+The `reconstruct_counts` function is a simple helper that adds predicted delta to yesterday's count. The test verifies correct arithmetic behavior only—it does not verify correctness relative to ground truth counts, which would require integration testing against the training pipeline (not covered by unit tests).
+
+### Findings Summary
+No substantive findings. All five checks pass. The diff introduces:
+1. A new helper function in `src/experiment.py` that correctly reconstructs transformed targets
+2. A corresponding unit test that verifies the arithmetic operation
+
+Neither change invalidates any conclusion or alters model behavior negatively.
