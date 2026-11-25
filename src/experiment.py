@@ -12,6 +12,11 @@ from src.ingest import load_raw
 from src.train import MODELS, temporal_split
 
 
+def reconstruct_counts(yesterday_counts, predicted_delta):
+    """Reconstruct counts by adding the predicted change to yesterday's count."""
+    return yesterday_counts + predicted_delta
+
+
 def run(split="valid"):
     frame = build_features(load_raw())
     cols = feature_columns(frame)
@@ -22,7 +27,9 @@ def run(split="valid"):
     # yesterday's observed count is the reconstruction anchor, never today's.
     delta = train[TARGET] - train.cnt_lag_1
     model.fit(train[cols], delta)
-    prediction = part.cnt_lag_1.to_numpy() + model.predict(part[cols])
+    prediction = reconstruct_counts(
+        part.cnt_lag_1.to_numpy(), model.predict(part[cols])
+    )
     return {
         "transformation": "cnt - cnt_lag_1",
         "reconstruction": "cnt_lag_1 + predicted_delta",
