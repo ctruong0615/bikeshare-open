@@ -28,3 +28,16 @@ def test_no_overlapping_dates(splits):
     train, valid, test = splits
     dates = pd.concat([train.dteday, valid.dteday, test.dteday])
     assert dates.is_unique
+
+
+def test_temporal_split_respects_fixed_calendar_cutoffs():
+    dec_31, jan_1, jun_30, jul_1 = pd.to_datetime(
+        ["2011-12-31", "2012-01-01", "2012-06-30", "2012-07-01"]
+    )
+    days = pd.DataFrame({"dteday": [dec_31, jan_1, jun_30, jul_1]})
+
+    train, valid, test = temporal_split(days)
+
+    assert train.dteday.tolist() == [dec_31]
+    assert valid.dteday.tolist() == [jan_1, jun_30]
+    assert test.dteday.tolist() == [jul_1]
