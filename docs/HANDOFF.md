@@ -9,12 +9,15 @@ do not squash it into one commit.
 
 ## What still needs the group
 
-- Supply a peer/another group's repository URL for Exercise 3. Replace the
-  explicitly pending `docs/AUDIT.md` with real auditor output and the group's
-  verdict. Ctrl+F "Audit a teammate" or "docs/AUDIT.md" on the assignment page.
+- Follow the instructor's shared-repository branch-audit clarification:
+  Calvin audits Faline, Faline audits Andrew, and Andrew audits Calvin before
+  merge. Calvin's accepted audit of Faline is recorded in `docs/AUDIT.md`;
+  the other two reviews are pending. No external-group repository is needed
+  for this instructed team workflow.
 - Review `REPORT.md` and the agent-proposed decisions in `docs/DECISIONS.md`.
   Record what the group actually agrees with. Do not assign invented work to
   members or describe scripted restores as local-model reasoning turns.
+  An all-member review is a recommendation, not an extra required deliverable.
 - Confirm the own-repository audit is a successful real run and address any
   findings. An error record is evidence of failure, not a completed audit.
 - Ensure graders and collaborators can access the private GitHub repository
