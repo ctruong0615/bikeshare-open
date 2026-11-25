@@ -44,6 +44,7 @@ Models used: local `qwen3.5:9b` via Ollama as `bikeshare-coder`, 65,536-token co
 Agent-generated work:
 - Codex created the repository history, corrected and added tests, implemented the feature, validation and residual-target experiments, integrity/Stop checks, fault scripts and evidence, SDK adjustments, and this report draft. The main modelling pipeline, baseline choices, and five initial decision lines were inherited from the starter.
 - Local qwen received the real `/new-feature` invocation. Its attempted test replacement was rejected and preserved; it was not credited with the corrected test or feature. The completed local SDK self-audit result is stored verbatim in `reports/audit.jsonl`.
+- Codex independently reviewed Calvin's calendar-gap test diff, ran pytest, and drafted Andrew's audit entry. The Ollama preflight failed, so the separate Claude Code reviewer run is pending.
 - Source-fault repairs were scripted byte restorations, one repair action each. They are not measurements of independent qwen debugging performance.
 - A real local `/seed-fault` repeat completed successfully in six CLI turns with red pytest exit 1, hook exit 2, and repaired pytest exit 0. An earlier four-turn invocation completed the underlying script but hit its turn limit during follow-up; both outputs are retained. The successful summary named the original evidence paths rather than the new attempt-2 files, so the script now returns an explicit `evidence_prefix` for reliable reporting.
 

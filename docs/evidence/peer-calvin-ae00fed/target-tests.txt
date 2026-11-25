@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.1, pytest-8.1.1, pluggy-1.4.0 -- /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+rootdir: /Users/andykim/.codex/.chatgpt-projects/g-p-6abf5546874c819199ee0494da89d5e7/ma5-docker/bikeshare-calvin-review
+collecting ... collected 4 items
+
+tests/test_calendar_gap.py::test_gap_and_seven_incomplete_history_days_are_excluded PASSED [ 25%]
+tests/test_calendar_gap.py::test_variability_matches_seven_calendar_days_on_each_side_of_gap[2011-03-09] PASSED [ 50%]
+tests/test_calendar_gap.py::test_variability_matches_seven_calendar_days_on_each_side_of_gap[2011-03-18] PASSED [ 75%]
+tests/test_calendar_gap.py::test_todays_count_cannot_change_todays_variability PASSED [100%]
+
+============================== 4 passed in 1.26s ===============================

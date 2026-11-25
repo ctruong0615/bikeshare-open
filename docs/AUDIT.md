@@ -8,7 +8,7 @@ on a branch and audit a different member's branch in a fresh reviewer session.
 |---|---|---|
 | Calvin | Faline | Completed and verdict accepted on 2026-11-25; not yet merged |
 | Faline | Andrew | Pending; no audit output received |
-| Andrew | Calvin | Pending; no audit output received |
+| Andrew | Calvin | Provisional verdict approved on 2026-11-25; Claude Code audit pending |
 
 ## Calvin audits Faline — target reconstruction
 
@@ -104,3 +104,65 @@ by the existing tests and is not a regression from this branch.
 
 Status: audit accepted for the exact commit above; branch remains unmerged.
 If the branch changes, review the new diff before merging it.
+
+## Andrew audits Calvin — calendar-gap regression tests
+
+- Branch [calvin/calendar-gap-tests](https://github.com/ctruong0615/bikeshare-open/tree/calvin/calendar-gap-tests).
+- Reviewed commit `ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845`.
+- Diff base `398fc667a92b976de2eed1b0f8a88a7db00474b9`, the merge base with the fetched `origin/main`.
+- Independent checks performed on 2026-11-25 (Pacific time) in a detached worktree at the reviewed commit.
+
+### Auditor output — pending
+
+Claude Code 2.1.289 was available. The course model preflight exited 2
+because the Ollama executable was missing. The local endpoint at
+`localhost:11434` was unreachable, and the disk had about 155 MiB free for
+the course model's roughly 7 GB download. The fresh `leakage-auditor`
+session is pending. This is the verbatim preflight output.
+
+```text
+bash model/check.sh
+FAIL: ollama is not installed. See https://ollama.com/download
+make: *** [check-model] Error 1
+```
+
+The command output is saved in the [model preflight log](evidence/peer-calvin-ae00fed/check-model.txt).
+
+### Independent checks
+
+```text
+git diff 398fc667a92b976de2eed1b0f8a88a7db00474b9...HEAD
+python3 -B -m pytest tests/test_calendar_gap.py -vv -p no:cacheprovider
+python3 -B -m pytest tests/ -q -p no:cacheprovider
+```
+
+All four targeted cases and all 23 suite tests passed. The runs used the
+installed Python 3.12.1, NumPy 1.26.4, pandas 2.2.3, scikit-learn 1.7.2 and
+pytest 8.1.1. These package versions differ from the repository pins. The
+base and reviewed commit have identical `src/` trees and identical
+`reports/metrics.json` blobs. [Targeted tests](evidence/peer-calvin-ae00fed/target-tests.txt),
+[full suite](evidence/peer-calvin-ae00fed/full-tests.txt).
+
+### Andrew's approved provisional verdict
+
+Andrew approved this provisional verdict in chat on 2026-11-25. It covers
+the independent checks performed at the reviewed commit.
+
+My independent review found no result-changing issue in Calvin's commit.
+The four new cases check exclusion of dates with incomplete history after
+the March 10 gap and sample variability from the previous seven calendar
+days on each side of the gap. They also confirm that changing today's count
+leaves today's variability unchanged and affects tomorrow's variability.
+All four targeted cases and all 23 branch tests passed. The diff adds
+regression coverage and leaves the forecast pipeline and reported metrics
+unchanged. My assessment of the auditor's
+findings is pending the Claude Code run.
+
+### Team SDK self-audit
+
+[`reports/audit.jsonl`](../reports/audit.jsonl) already contains the
+successful SDK result recorded in `b2084dfb178bdb44e880cc6fab17ded89d2fc905`.
+It reports no leakage, valid temporal ordering, both baselines and
+reproducibility. `REPORT.md` records the verification limits of that run.
+A run on the final integrated commit is still pending, along with the
+final integrated tests and the outstanding peer reviews.

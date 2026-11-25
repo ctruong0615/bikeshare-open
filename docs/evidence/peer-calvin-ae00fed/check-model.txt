@@ -1,0 +1,3 @@
+bash model/check.sh
+FAIL: ollama is not installed. See https://ollama.com/download
+make: *** [check-model] Error 1
