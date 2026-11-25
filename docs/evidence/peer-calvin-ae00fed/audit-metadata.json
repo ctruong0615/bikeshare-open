@@ -1,0 +1,113 @@
+{
+  "reviewer": "Andrew Kim",
+  "branch": "calvin/calendar-gap-tests",
+  "audited_commit": "ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845",
+  "base_commit": "398fc667a92b976de2eed1b0f8a88a7db00474b9",
+  "audit_date_pacific": "2026-11-25",
+  "harness": "Claude Code 2.1.289",
+  "agent": "leakage-auditor",
+  "session_id": "5f6559c7-f7cf-4c03-8d35-26cbd62bcef3",
+  "ollama_version": "0.40.18",
+  "model": "bikeshare-coder",
+  "base_model": "qwen3.5:9b",
+  "context_tokens": 65536,
+  "tool_calls": [
+    {
+      "tool": "Read",
+      "input": "src/config.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git diff --no-ext-diff 398fc667a92b976de2eed1b0f8a88a7db00474b9...ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "src/features.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git show --name-only ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845 --pretty=format='%H %s' --name-only | head -20",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git log --oneline -10 398fc667a92b976de2eed1b0f8a88a7db00474b9",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git show 398fc667a92b976de2eed1b0f8a88a7db00474b9:src/features.py | head -50",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git show 398fc667a92b976de2eed1b0f8a88a7db00474b9:src/features.py | head -90 | tail -50",
+      "outcome": "success"
+    },
+    {
+      "tool": "Grep",
+      "input": ".",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "src/train.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "tests/test_calendar_gap.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Grep",
+      "input": "tests",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "tests/test_split.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "tests/test_leakage.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Read",
+      "input": "tests/test_contract.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "pytest tests/test_calendar_gap.py -v 2>&1 | head -60",
+      "outcome": "error",
+      "error": "Permission to use Bash has been denied because Claude Code is running in don't ask mode."
+    },
+    {
+      "tool": "Bash",
+      "input": "git log --format=\"%B\" -n 1 ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "cat src/features.py",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git show ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845 --stat | grep -E \"^(src/|tests/)\" ",
+      "outcome": "success"
+    },
+    {
+      "tool": "Bash",
+      "input": "git show ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845 --stat | head -30",
+      "outcome": "success"
+    }
+  ],
+  "continued_for_final_report": true
+}

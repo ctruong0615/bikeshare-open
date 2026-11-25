@@ -1,0 +1,15 @@
+## Leakage Auditor Report
+
+Commit `ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845` against base `398fc667a92b976de2eed1b0f8a88a7db00474b9`.
+
+### Finding
+**Only adds a test file.** This commit introduces `tests/test_calendar_gap.py` with four regression tests validating the existing calendar-gap handling in `src/features.py`. **No implementation code was modified** between these commits.
+
+### Verification of Five Checks (via reading current state)
+1. **Target leakage:** PASS — lag features use `.shift(1)` before aggregation; `feature_columns()` filters out `FORBIDDEN` which includes `"cnt"`, `"casual"`, `"registered"` (config lines 24, 32, 47).
+2. **Temporal ordering:** PASS — all lags shift before rolling aggregations (features.py lines 74-76); `temporal_split()` in train.py splits by date (lines 57-63); models fit only on train data.
+3. **Calendar gaps:** PASS — `reindex_to_calendar()` inserts missing days (features.py line 44); test validates excluded range and independence from today's count.
+4. **Silent row loss:** PASS — `dropna()` at line 79 is bounded by `test_contract.py`'s `test_only_expected_rows_are_dropped()` asserting lost rows ≤ LAG_WARMUP × (1 + missing_days).
+5. **Unreported baseline:** PASS — `baseline_mean` (line 50) and `baseline_persistence` (line 51, predicts `cnt_lag_1`) both appear alongside ridge and hgb.
+
+All five checks pass. The commit safely adds validation tests without altering any numbers or conclusions.

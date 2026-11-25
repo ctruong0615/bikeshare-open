@@ -8,7 +8,7 @@ on a branch and audit a different member's branch in a fresh reviewer session.
 |---|---|---|
 | Calvin | Faline | Completed and verdict accepted on 2026-11-25; not yet merged |
 | Faline | Andrew | Pending; no audit output received |
-| Andrew | Calvin | Provisional verdict approved on 2026-11-25; Claude Code audit pending |
+| Andrew | Calvin | Claude Code audit completed on 2026-11-25. It agrees with the approved provisional verdict. |
 
 ## Calvin audits Faline — target reconstruction
 
@@ -112,21 +112,41 @@ If the branch changes, review the new diff before merging it.
 - Diff base `398fc667a92b976de2eed1b0f8a88a7db00474b9`, the merge base with the fetched `origin/main`.
 - Independent checks performed on 2026-11-25 (Pacific time) in a detached worktree at the reviewed commit.
 
-### Auditor output — pending
+### Auditor output — verbatim
 
-Claude Code 2.1.289 was available. The course model preflight exited 2
-because the Ollama executable was missing. The local endpoint at
-`localhost:11434` was unreachable, and the disk had about 155 MiB free for
-the course model's roughly 7 GB download. The fresh `leakage-auditor`
-session is pending. This is the verbatim preflight output.
+Claude Code 2.1.289 ran the repo's `leakage-auditor` in a fresh session
+against the pinned diff. The model was `bikeshare-coder` built from
+`qwen3.5:9b` via local Ollama 0.40.18 with a 65,536-token context.
+`make check-model` observed a successful tool call despite a warning about
+advertised tool support. [Successful preflight](evidence/peer-calvin-ae00fed/check-model-success.txt),
+[initial preflight failure](evidence/peer-calvin-ae00fed/check-model.txt).
 
-```text
-bash model/check.sh
-FAIL: ollama is not installed. See https://ollama.com/download
-make: *** [check-model] Error 1
-```
+The first pass gathered the exact diff and read the relevant code and tests.
+It stalled before producing a report and recorded a Claude Code stream error.
+The same reviewer session was resumed with tools disabled to produce the
+report below. Claude Code denied the reviewer's direct pytest invocation.
+The passing test counts come from the independent runs.
+[Run metadata](evidence/peer-calvin-ae00fed/audit-metadata.json),
+[Claude Code result](evidence/peer-calvin-ae00fed/claude-result.json),
+[verbatim text](evidence/peer-calvin-ae00fed/auditor-verbatim.txt).
 
-The command output is saved in the [model preflight log](evidence/peer-calvin-ae00fed/check-model.txt).
+````text
+## Leakage Auditor Report
+
+Commit `ae00fed0b819e0cf1e7aa1ac63722bf7f3d6a845` against base `398fc667a92b976de2eed1b0f8a88a7db00474b9`.
+
+### Finding
+**Only adds a test file.** This commit introduces `tests/test_calendar_gap.py` with four regression tests validating the existing calendar-gap handling in `src/features.py`. **No implementation code was modified** between these commits.
+
+### Verification of Five Checks (via reading current state)
+1. **Target leakage:** PASS — lag features use `.shift(1)` before aggregation; `feature_columns()` filters out `FORBIDDEN` which includes `"cnt"`, `"casual"`, `"registered"` (config lines 24, 32, 47).
+2. **Temporal ordering:** PASS — all lags shift before rolling aggregations (features.py lines 74-76); `temporal_split()` in train.py splits by date (lines 57-63); models fit only on train data.
+3. **Calendar gaps:** PASS — `reindex_to_calendar()` inserts missing days (features.py line 44); test validates excluded range and independence from today's count.
+4. **Silent row loss:** PASS — `dropna()` at line 79 is bounded by `test_contract.py`'s `test_only_expected_rows_are_dropped()` asserting lost rows ≤ LAG_WARMUP × (1 + missing_days).
+5. **Unreported baseline:** PASS — `baseline_mean` (line 50) and `baseline_persistence` (line 51, predicts `cnt_lag_1`) both appear alongside ridge and hgb.
+
+All five checks pass. The commit safely adds validation tests without altering any numbers or conclusions.
+````
 
 ### Independent checks
 
@@ -155,8 +175,10 @@ days on each side of the gap. They also confirm that changing today's count
 leaves today's variability unchanged and affects tomorrow's variability.
 All four targeted cases and all 23 branch tests passed. The diff adds
 regression coverage and leaves the forecast pipeline and reported metrics
-unchanged. My assessment of the auditor's
-findings is pending the Claude Code run.
+unchanged.
+
+The completed auditor report agrees with Andrew's approved provisional
+verdict. It found no result-changing issue in this test-only diff.
 
 ### Team SDK self-audit
 
