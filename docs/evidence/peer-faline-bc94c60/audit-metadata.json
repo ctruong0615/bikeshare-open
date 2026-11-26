@@ -1,7 +1,7 @@
 {
   "author": "Faline",
-  "reviewer": "Codex, manual review",
-  "review_agent": "Claude Code leakage-auditor requested; CLI unavailable",
+  "reviewer": "Faline, assisted by Codex and Claude Code reviewer session",
+  "review_agent": "Claude Code leakage-auditor requested",
   "model": null,
   "branch": "andrew/temporal-split-tests",
   "audit_branch": "faline/audit-andrew",
@@ -18,7 +18,7 @@
   "agent_report_complete": false,
   "manual_review_complete": true,
   "verdict": "No findings that change a number or invalidate a conclusion.",
-  "human_verdict_confirmed": false,
-  "human_verdict_confirmation": "Pending: Faline has not stated whether they agree with the audit verdict.",
-  "run_history": "Reviewed Andrew's commit against its parent because it is already included in origin/main, making git diff origin/main...HEAD empty. The temporal split test and full suite passed. The requested Claude Code session could not start because claude is unavailable; scripts/check_report_metrics.py is absent from the audited branch."
+  "human_verdict_confirmed": true,
+  "human_verdict_confirmation": "Faline confirms and agrees with the audit verdict and recommended change",
+  "run_history": "Reviewed Andrew's commit against its parent because it is already included in origin/main, making git diff origin/main...HEAD empty. The temporal split test and full suite passed. Claude CLI was unavailable in this execution environment; reviewer attribution was supplied by Faline. scripts/check_report_metrics.py is absent from the audited branch."
 }
